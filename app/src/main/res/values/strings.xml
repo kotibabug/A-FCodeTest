@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">A&amp;FCodingTest</string>
     <string name="title_promotions">Promotions</string>
+    <string name="extra_target">target</string>
 </resources>

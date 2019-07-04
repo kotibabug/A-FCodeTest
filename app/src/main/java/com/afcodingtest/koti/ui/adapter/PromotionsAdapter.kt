@@ -1,6 +1,7 @@
 package com.afcodingtest.koti.ui.adapter
 
 import android.support.v7.widget.RecyclerView
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ class PromotionsAdapter :
     RecyclerView.Adapter<PromotionsAdapter.ItemViewHolder> {
 
     private var promotionsList: ArrayList<Promotion>
+    private lateinit var mClickListener: ContentClickListener
 
     constructor(promotionsList: ArrayList<Promotion>) : super() {
         this.promotionsList = promotionsList
@@ -78,6 +80,12 @@ class PromotionsAdapter :
                 ) as TextView
             holder.content.addView(contentBtn)
             contentBtn.text = it.title
+            contentBtn.tag = it.target
+            contentBtn.setOnClickListener {
+                it.tag?.let {
+                    mClickListener.onContentClick(it.toString())
+                }
+            }
             val params = contentBtn.layoutParams as LinearLayout.LayoutParams
             params.setMargins(0, 0, 0, 20)
             contentBtn.layoutParams = params
@@ -102,22 +110,19 @@ class PromotionsAdapter :
             content = view.content
         }
 
-        /* override fun onClick(view: View) {
-             mClickListener?.onItemClick(view, adapterPosition)
-         }*/
     }
 
-    /*fun setOnClickListener(listener: ItemClickListener) {
+    fun setOnContentClickListener(listener: ContentClickListener) {
         mClickListener = listener
     }
-    */
+
 
     fun clear() {
         promotionsList.clear()
         notifyDataSetChanged()
     }
 
-    interface ItemClickListener {
-        fun onItemClick(view: View, position: Int)
+    interface ContentClickListener {
+        fun onContentClick(target: String)
     }
 }

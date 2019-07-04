@@ -28,4 +28,8 @@ class PromotionsPresenter : PromotionsContract.Presenter {
             }
         })
     }
+
+    override fun showDetail(target: String) {
+        view.showDetail(target)
+    }
 }
