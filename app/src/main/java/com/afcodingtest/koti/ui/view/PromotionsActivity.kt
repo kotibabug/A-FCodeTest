@@ -14,25 +14,26 @@ import kotlinx.android.synthetic.main.activity_promotions.*
 
 class PromotionsActivity : AppCompatActivity(), PromotionsContract.View, PromotionsAdapter.ContentClickListener {
 
-    private lateinit var presenter: PromotionsContract.Presenter
+    private var presenter = PromotionsPresenter()
     private var adapter: PromotionsAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_promotions)
         title = getString(R.string.title_promotions)
-        PromotionsPresenter(this)
+        presenter.attachView(this)
         presenter.loadPromotions()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.detachView()
     }
 
     override fun showPromotions(promotions: ArrayList<Promotion>) {
         adapter = PromotionsAdapter(promotions)
         item_list.adapter = adapter
         adapter?.setOnContentClickListener(this)
-    }
-
-    override fun setPresenter(presenter: PromotionsContract.Presenter) {
-        this.presenter = presenter
     }
 
     override fun showLoadingIndicator(isActive: Boolean) {

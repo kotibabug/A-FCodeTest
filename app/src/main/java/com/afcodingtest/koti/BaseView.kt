@@ -1,7 +1,6 @@
 package com.afcodingtest.koti
 
-interface BaseView<T> {
-    fun setPresenter(presenter: T)
+interface BaseView {
     fun showLoadingIndicator(isActive: Boolean)
     fun showLoadingError(error: String)
 }

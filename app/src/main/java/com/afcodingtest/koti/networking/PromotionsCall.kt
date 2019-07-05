@@ -1,18 +1,16 @@
 package com.afcodingtest.koti.networking
 
+import android.util.Log
 import com.afcodingtest.koti.model.Promotion
 import com.google.gson.Gson
-import com.sample.networking.APIService
 import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
-import io.reactivex.ObservableOnSubscribe
 import java.io.IOException
 import java.io.InputStream
 import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 
-object PromotionsCall {
+class PromotionsCall {
 
     @Throws(IOException::class)
     private fun makeHttpCall(url: String): String? {
@@ -30,15 +28,15 @@ object PromotionsCall {
         return response
     }
 
-    fun getPromotions(): Observable<List<Promotion>> {
+    fun getPromotions(): Observable<ArrayList<Promotion>> {
         return Observable.create { emitter ->
             try {
-                val response = makeHttpCall(APIService.PROMOTIONS_URL)
+                val response = makeHttpCall(PROMOTIONS_URL)
                 val promotionList = Gson().fromJson(
                     response,
                     Array<Promotion>::class.java
                 ).toList()
-                emitter.onNext(promotionList)
+                emitter.onNext(ArrayList(promotionList))
                 emitter.onComplete()
             } catch (e: Exception) {
                 emitter.onError(e)
@@ -46,4 +44,7 @@ object PromotionsCall {
         }
     }
 
+    companion object {
+        const val PROMOTIONS_URL = "https://www.abercrombie.com/anf/nativeapp/qa/codetest/codeTest_exploreData.json"
+    }
 }

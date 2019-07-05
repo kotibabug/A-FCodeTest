@@ -5,12 +5,14 @@ import com.afcodingtest.koti.model.Promotion
 
 interface PromotionsContract {
 
-    interface View : BaseView<Presenter> {
+    interface View : BaseView {
         fun showPromotions(promotions: ArrayList<Promotion>)
         fun showDetail(target: String)
     }
 
     interface Presenter {
+        fun attachView(view: View)
+        fun detachView()
         fun loadPromotions()
         fun showDetail(target: String)
     }
