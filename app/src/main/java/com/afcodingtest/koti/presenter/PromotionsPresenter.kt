@@ -41,7 +41,7 @@ class PromotionsPresenter : PromotionsContract.Presenter {
             })
     }
 
-    override fun showDetail(target: String) {
-        view?.showDetail(target)
+    override fun showDetail(target: String?) {
+        target?.let { view?.showDetail(it) }
     }
 }

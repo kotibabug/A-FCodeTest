@@ -1,7 +1,6 @@
 package com.afcodingtest.koti.ui.adapter
 
 import android.support.v7.widget.RecyclerView
-import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +9,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.afcodingtest.koti.R
 import com.afcodingtest.koti.model.Promotion
-import com.afcodingtest.koti.utils.setTextWithHtml
-import com.squareup.picasso.Picasso
+import com.afcodingtest.koti.utils.setDisplayContent
+import com.afcodingtest.koti.utils.setDisplayHtmlContent
+import com.afcodingtest.koti.utils.showImage
 import kotlinx.android.synthetic.main.item_promotion.view.*
 
 class PromotionsAdapter :
@@ -26,7 +26,6 @@ class PromotionsAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_promotion, parent, false)
-        val promotion = promotionsList[position]
         return ItemViewHolder(view)
     }
 
@@ -36,59 +35,15 @@ class PromotionsAdapter :
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val promotion = promotionsList[position]
-        promotion.backgroundImage?.let {
-            holder.promotionImage.visibility = View.VISIBLE
-            Picasso.get().load(it).into(holder.promotionImage)
-        } ?: run {
-            holder.promotionImage.visibility = View.GONE
-        }
-        promotion.topDescription?.let {
-            holder.topDescription.visibility = View.VISIBLE
-            holder.topDescription.text = it
-        } ?: run {
-            holder.topDescription.visibility = View.GONE
-        }
-
-        promotion.title?.let {
-            holder.title.visibility = View.VISIBLE
-            holder.title.text = it
-        } ?: run {
-            holder.title.visibility = View.GONE
-        }
-
-        promotion.promoMessage?.let {
-            holder.promoMessage.visibility = View.VISIBLE
-            holder.promoMessage.text = it
-        } ?: run {
-            holder.promoMessage.visibility = View.GONE
-        }
-
-        promotion.bottomDescription?.let {
-            holder.bottomDescription.visibility = View.VISIBLE
-            holder.bottomDescription.setTextWithHtml(it)
-        } ?: run {
-            holder.bottomDescription.visibility = View.GONE
-        }
+        holder.promotionImage.showImage(promotion.backgroundImage)
+        holder.topDescription.setDisplayContent(promotion.topDescription)
+        holder.title.setDisplayContent(promotion.title)
+        holder.promoMessage.setDisplayContent(promotion.promoMessage)
+        holder.bottomDescription.setDisplayHtmlContent(promotion.bottomDescription)
 
         holder.content.removeAllViews()
         promotion.content?.forEach {
-            val contentBtn: TextView =
-                LayoutInflater.from(holder.content.context).inflate(
-                    R.layout.item_textbutton,
-                    holder.content,
-                    false
-                ) as TextView
-            holder.content.addView(contentBtn)
-            contentBtn.text = it.title
-            contentBtn.tag = it.target
-            contentBtn.setOnClickListener {
-                it.tag?.let {
-                    mClickListener.onContentClick(it.toString())
-                }
-            }
-            val params = contentBtn.layoutParams as LinearLayout.LayoutParams
-            params.setMargins(0, 0, 0, 20)
-            contentBtn.layoutParams = params
+            addContentButton(holder.content, it)
         }
 
     }
@@ -112,6 +67,24 @@ class PromotionsAdapter :
 
     }
 
+    private fun addContentButton(layout: LinearLayout, content: Promotion.Content) {
+        val contentBtn: TextView =
+        LayoutInflater.from(layout.context).inflate(
+            R.layout.item_textbutton,
+            layout,
+            false
+        ) as TextView
+        layout.addView(contentBtn)
+        contentBtn.text = content.title
+        contentBtn.tag = content.target
+        contentBtn.setOnClickListener {
+            mClickListener.onContentClick(it.toString())
+        }
+        val params = contentBtn.layoutParams as LinearLayout.LayoutParams
+        params.setMargins(0, 0, 0, 20)
+        contentBtn.layoutParams = params
+    }
+
     fun setOnContentClickListener(listener: ContentClickListener) {
         mClickListener = listener
     }
@@ -123,6 +96,6 @@ class PromotionsAdapter :
     }
 
     interface ContentClickListener {
-        fun onContentClick(target: String)
+        fun onContentClick(target: String?)
     }
 }

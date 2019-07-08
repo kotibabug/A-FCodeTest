@@ -14,6 +14,6 @@ interface PromotionsContract {
         fun attachView(view: View)
         fun detachView()
         fun loadPromotions()
-        fun showDetail(target: String)
+        fun showDetail(target: String?)
     }
 }

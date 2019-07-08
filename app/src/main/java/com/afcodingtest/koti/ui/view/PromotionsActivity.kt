@@ -48,7 +48,7 @@ class PromotionsActivity : AppCompatActivity(), PromotionsContract.View, Promoti
         adapter?.clear()
     }
 
-    override fun onContentClick(target: String) {
+    override fun onContentClick(target: String?) {
        presenter.showDetail(target)
     }
 
