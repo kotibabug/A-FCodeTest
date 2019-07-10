@@ -78,7 +78,7 @@ class PromotionsAdapter :
         contentBtn.text = content.title
         contentBtn.tag = content.target
         contentBtn.setOnClickListener {
-            mClickListener.onContentClick(it.toString())
+            mClickListener.onContentClick(it.tag.toString())
         }
         val params = contentBtn.layoutParams as LinearLayout.LayoutParams
         params.setMargins(0, 0, 0, 20)

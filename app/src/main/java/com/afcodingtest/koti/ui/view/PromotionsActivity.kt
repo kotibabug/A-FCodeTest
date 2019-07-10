@@ -5,21 +5,26 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
+import com.afcodingtest.koti.AFApplication
 import com.afcodingtest.koti.R
 import com.afcodingtest.koti.contract.PromotionsContract
+import com.afcodingtest.koti.di.component.DaggerAppComponent
+import com.afcodingtest.koti.di.module.PromotionsPresenterModule
 import com.afcodingtest.koti.model.Promotion
-import com.afcodingtest.koti.presenter.PromotionsPresenter
 import com.afcodingtest.koti.ui.adapter.PromotionsAdapter
 import kotlinx.android.synthetic.main.activity_promotions.*
+import javax.inject.Inject
 
 class PromotionsActivity : AppCompatActivity(), PromotionsContract.View, PromotionsAdapter.ContentClickListener {
 
-    private var presenter = PromotionsPresenter()
+    @Inject
+    lateinit var presenter: PromotionsContract.Presenter
     private var adapter: PromotionsAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_promotions)
+        (application as AFApplication).appComponent.inject(this)
         title = getString(R.string.title_promotions)
         presenter.attachView(this)
         presenter.loadPromotions()
@@ -49,7 +54,7 @@ class PromotionsActivity : AppCompatActivity(), PromotionsContract.View, Promoti
     }
 
     override fun onContentClick(target: String?) {
-       presenter.showDetail(target)
+        presenter.showDetail(target)
     }
 
     override fun showDetail(target: String) {
