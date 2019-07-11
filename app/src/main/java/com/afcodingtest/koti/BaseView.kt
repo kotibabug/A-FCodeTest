@@ -1,6 +1,7 @@
 package com.afcodingtest.koti
 
 interface BaseView {
-    fun showLoadingIndicator(isActive: Boolean)
+    fun showLoadingIndicator()
+    fun hideLoadingIndicator()
     fun showLoadingError(error: String)
 }

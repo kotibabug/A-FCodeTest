@@ -5,10 +5,7 @@ import okhttp3.Response
 
 class SupportInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        var request = chain.request()
-        request = request?.newBuilder()
-            ?.addHeader("User-Agent", System.getProperty("http.agent"))
-            ?.build()
+        val request = chain.request().newBuilder().addHeader("User-Agent", System.getProperty("http.agent")).build()
         return chain.proceed(request)
     }
 }

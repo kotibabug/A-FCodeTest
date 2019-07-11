@@ -5,6 +5,7 @@ import com.afcodingtest.koti.model.Promotion
 import com.afcodingtest.koti.networking.APIEndPoint
 import com.afcodingtest.koti.utils.ViewNullException
 import io.reactivex.Observer
+import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -23,30 +24,33 @@ class PromotionsPresenter @Inject constructor(private val apiEndPoint: APIEndPoi
 
     override fun loadPromotions() {
         view?.let {
-            it.showLoadingIndicator(true)
+            it.showLoadingIndicator()
             apiEndPoint.getPromotions().observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
-                .subscribe(object : Observer<List<Promotion>> {
-                    override fun onComplete() {}
-
-                    override fun onSubscribe(d: Disposable) {}
-
-                    override fun onNext(response: List<Promotion>) {
-                        it.showPromotions(ArrayList(response))
-                        it.showLoadingIndicator(false)
-                    }
-
-                    override fun onError(e: Throwable) {
-                        if(e.message != null) {
-                            it.showLoadingError(e.message!!)
-                        }
-                        it.showLoadingIndicator(false)
-                    }
-                })
-        }?:run {
+                .subscribe(promotionsObserver(it))
+        } ?: run {
             throw ViewNullException()
         }
 
+    }
+
+    private fun promotionsObserver(view: PromotionsContract.View): SingleObserver<List<Promotion>> {
+        return object : SingleObserver<List<Promotion>> {
+
+            override fun onSubscribe(d: Disposable) {}
+
+            override fun onSuccess(response: List<Promotion>) {
+                view.showPromotions(response)
+                view.hideLoadingIndicator()
+            }
+
+            override fun onError(e: Throwable) {
+                if (e.message != null) {
+                    view.showLoadingError(e.message!!)
+                }
+                view.hideLoadingIndicator()
+            }
+        }
     }
 
     override fun showDetail(target: String?) {

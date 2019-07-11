@@ -1,21 +1,19 @@
 package com.afcodingtest.koti.ui.view
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
 import com.afcodingtest.koti.AFApplication
 import com.afcodingtest.koti.R
 import com.afcodingtest.koti.contract.PromotionsContract
-import com.afcodingtest.koti.di.component.DaggerAppComponent
-import com.afcodingtest.koti.di.module.PromotionsPresenterModule
 import com.afcodingtest.koti.model.Promotion
+import com.afcodingtest.koti.ui.BaseActivity
 import com.afcodingtest.koti.ui.adapter.PromotionsAdapter
 import kotlinx.android.synthetic.main.activity_promotions.*
 import javax.inject.Inject
 
-class PromotionsActivity : AppCompatActivity(), PromotionsContract.View, PromotionsAdapter.ContentClickListener {
+class PromotionsActivity : BaseActivity(), PromotionsContract.View {
 
     @Inject
     lateinit var presenter: PromotionsContract.Presenter
@@ -26,8 +24,7 @@ class PromotionsActivity : AppCompatActivity(), PromotionsContract.View, Promoti
         setContentView(R.layout.activity_promotions)
         (application as AFApplication).appComponent.inject(this)
         title = getString(R.string.title_promotions)
-        presenter.attachView(this)
-        presenter.loadPromotions()
+        initialize()
     }
 
     override fun onDestroy() {
@@ -35,26 +32,23 @@ class PromotionsActivity : AppCompatActivity(), PromotionsContract.View, Promoti
         presenter.detachView()
     }
 
-    override fun showPromotions(promotions: ArrayList<Promotion>) {
-        adapter = PromotionsAdapter(promotions)
+    private fun initialize() {
+        presenter.attachView(this)
+        presenter.loadPromotions()
+        adapter = PromotionsAdapter {
+            target -> showDetail(target =  target)
+        }
         item_list.adapter = adapter
-        adapter?.setOnContentClickListener(this)
     }
 
-    override fun showLoadingIndicator(isActive: Boolean) {
-        if (isActive)
-            progressBar.visibility = View.VISIBLE
-        else
-            progressBar.visibility = View.INVISIBLE
+    override fun showPromotions(promotions: List<Promotion>) {
+        adapter?.setData(promotions)
+        adapter?.notifyDataSetChanged()
     }
 
     override fun showLoadingError(error: String) {
-        Snackbar.make(container, error, Snackbar.LENGTH_LONG).show()
+        super.showLoadingError(error)
         adapter?.clear()
-    }
-
-    override fun onContentClick(target: String?) {
-        presenter.showDetail(target)
     }
 
     override fun showDetail(target: String) {

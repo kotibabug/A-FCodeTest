@@ -6,7 +6,7 @@ import com.afcodingtest.koti.model.Promotion
 interface PromotionsContract {
 
     interface View : BaseView {
-        fun showPromotions(promotions: ArrayList<Promotion>)
+        fun showPromotions(promotions: List<Promotion>)
         fun showDetail(target: String)
     }
 
